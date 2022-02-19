@@ -1,5 +1,6 @@
 package com.ian.projetointegradoianbs.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -17,7 +18,9 @@ import lombok.Setter;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class Paciente {
+public class Paciente implements Serializable {
+
+    public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

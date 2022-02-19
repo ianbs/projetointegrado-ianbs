@@ -1,14 +1,14 @@
 package com.ian.projetointegradoianbs.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import lombok.AllArgsConstructor;
+import com.ian.projetointegradoianbs.domain.enuns.TipoUsuario;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +16,9 @@ import lombok.Setter;
 
 @Entity
 @EqualsAndHashCode
-@AllArgsConstructor
 @NoArgsConstructor
-public class Profissional implements Serializable {
+public class Usuario implements Serializable {
+
     public static final long serialVersionUID = 1L;
 
     @Id
@@ -27,32 +27,23 @@ public class Profissional implements Serializable {
     private Long id;
     @Getter
     @Setter
-    private String razaoSocial;
+    private String nome;
     @Getter
     @Setter
-    private String conselho;
+    private String senha;
     @Getter
     @Setter
-    private String numeroConselho;
+    private String email;
     @Getter
     @Setter
-    private String especialidade;
-    @Getter
-    @Setter
-    private Integer cbo;
-    @Getter
-    @Setter
-    private String cpf;
-    @Getter
-    @Setter
-    private String cnpj;
-    @Getter
-    @Setter
-    private String rg;
-    @Getter
-    @Setter
-    private Date dataVinculo;
-    @Getter
-    @Setter
-    private Date dataNascimento;
+    private Integer tipoUsuario;
+
+    public Usuario(Long id, String nome, String senha, String email, TipoUsuario tipoUsuario) {
+        this.id = id;
+        this.nome = nome;
+        this.senha = senha;
+        this.email = email;
+        this.tipoUsuario = tipoUsuario.getId();
+    }
+
 }
