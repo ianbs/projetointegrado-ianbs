@@ -23,7 +23,7 @@ public class UsuarioServices implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByNome(username);
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByUsername(username);
         if (usuarioOptional.isEmpty()) {
             throw new UsernameNotFoundException("Usuário [" + username + "] não encontrado.");
         }

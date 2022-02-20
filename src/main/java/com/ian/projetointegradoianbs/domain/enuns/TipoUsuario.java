@@ -1,6 +1,8 @@
 package com.ian.projetointegradoianbs.domain.enuns;
 
-public enum TipoUsuario {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum TipoUsuario implements GrantedAuthority {
     ADMINISTRADOR(1, "Administrador"),
     PADRAO(2, "Padrão");
 
@@ -38,6 +40,11 @@ public enum TipoUsuario {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String getAuthority() {
+        return name();
     }
 
 }

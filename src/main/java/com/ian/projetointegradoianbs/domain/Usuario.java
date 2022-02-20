@@ -7,21 +7,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-// import com.ian.projetointegradoianbs.domain.enuns.TipoUsuario;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@EqualsAndHashCode
 public class Usuario implements UserDetails {
 
     public static final long serialVersionUID = 1L;
@@ -29,10 +27,11 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
-    private String senha;
-    // private String email;
-    // private Integer tipoUsuario;
+
+    private String username;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -41,12 +40,12 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.senha;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return this.nome;
+        return this.username;
     }
 
     @Override
@@ -69,20 +68,8 @@ public class Usuario implements UserDetails {
         return true;
     }
 
-    // public String getEmail() {
-    // return email;
-    // }
-
-    // public void setEmail(String email) {
-    // this.email = email;
-    // }
-
-    // public Integer getTipoUsuario() {
-    // return tipoUsuario;
-    // }
-
-    // public void setTipoUsuario(Integer tipoUsuario) {
-    // this.tipoUsuario = tipoUsuario;
-    // }
+    public void setPassword(String encode) {
+        this.password = encode;
+    }
 
 }
