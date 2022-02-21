@@ -1,5 +1,7 @@
 package com.ian.projetointegradoianbs.security;
 
+import java.util.Arrays;
+
 import com.ian.projetointegradoianbs.services.UsuarioServices;
 
 import org.springframework.context.annotation.Bean;
@@ -47,23 +49,14 @@ public class JWTConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     CorsConfigurationSource corsConfiguration() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
+                "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin",
+                "Cache-Control", "Content-Type"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-
-        corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedHeader("*");
-
-        // corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000/"));
-        // corsConfiguration.setAllowedHeaders(
-        // Arrays.asList("Access-Control-Allow-Origin", "Access-Control-Allow-Headers",
-        // "Authorization",
-        // "Access-Control-Allow-Headers", "Origin", "Accept", "X-Requested-With",
-        // "Content-Type",
-        // "Access-Control-Request-Method", "Access-Control-Request-Headers"));
-
-        source.registerCorsConfiguration("/**", corsConfiguration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
