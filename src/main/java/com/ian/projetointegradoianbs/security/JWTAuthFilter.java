@@ -31,8 +31,6 @@ public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     public static final String TOKEN_PASSWORD = "fb284ca8-91fd-11ec-b909-0242ac120002";
 
-    public static final String TOKEN_PREFIX = "Bearer ";
-
     private final AuthenticationManager authenticationManager;
 
     public JWTAuthFilter(AuthenticationManager authenticationManager) {
@@ -81,7 +79,10 @@ public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
 
         response.setContentType("application/json");
         // response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{\"token\": \"" + token + "\"}");
+        response.getWriter()
+                .write("{\"token\": \"" + token + "\", \"user\": { \"usuario_id \": " + usuarioData.getId()
+                        + ", \"usuario_nome\": \"" + usuarioData.getUsername() + "\" }" +
+                        "}");
         response.getWriter().flush();
     }
 

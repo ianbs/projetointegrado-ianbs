@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,10 +33,13 @@ public class Usuario implements UserDetails {
 
     private String username;
 
+    private String email;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @OneToOne(mappedBy = "usuario")
+    @JoinTable(name = "user_profissional", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "profissional_id"))
     private Profissional profissional;
 
     @Override
@@ -72,8 +77,8 @@ public class Usuario implements UserDetails {
         return true;
     }
 
-    public void setPassword(String encode) {
-        this.password = encode;
+    public Long getId() {
+        return id;
     }
 
 }
