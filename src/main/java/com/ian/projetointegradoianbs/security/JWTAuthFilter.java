@@ -81,7 +81,7 @@ public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
 
         response.setContentType("application/json");
         // response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("token:" + token.toString());
+        response.getWriter().write(token);
         response.getWriter().flush();
     }
 
