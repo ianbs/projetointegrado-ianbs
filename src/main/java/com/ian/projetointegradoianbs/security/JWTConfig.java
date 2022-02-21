@@ -69,7 +69,8 @@ public class JWTConfig extends WebSecurityConfigurerAdapter {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setMaxAge(3600L);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        config.setAllowedOrigins(
+                Arrays.asList("http://localhost:3000", "https://projetointegrado-ianbs-front.vercel.app"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
