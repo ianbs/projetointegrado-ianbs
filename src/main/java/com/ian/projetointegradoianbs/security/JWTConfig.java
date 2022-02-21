@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class JWTConfig extends WebSecurityConfigurerAdapter {
 
     private final UsuarioServices usuarioService;
@@ -38,7 +39,7 @@ public class JWTConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().disable().authorizeRequests().antMatchers(HttpMethod.POST,
+        http.csrf().disable().cors().and().authorizeRequests().antMatchers(HttpMethod.POST,
                 "/login")
                 .permitAll().anyRequest().authenticated().and()
                 .addFilter(new JWTAuthFilter(authenticationManager()))
@@ -58,5 +59,19 @@ public class JWTConfig extends WebSecurityConfigurerAdapter {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.setMaxAge(3600L);
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }
