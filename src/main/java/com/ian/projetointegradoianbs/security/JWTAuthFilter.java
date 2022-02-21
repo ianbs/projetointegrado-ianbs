@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ian.projetointegradoianbs.domain.Usuario;
 
 import org.springframework.http.HttpMethod;
@@ -81,7 +80,7 @@ public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
 
         response.setContentType("application/json");
         // response.setCharacterEncoding("UTF-8");
-        response.getWriter().print("\"token\": " + token);
+        response.getWriter().write("[{\"token\": " + token + "}]");
         response.getWriter().flush();
     }
 
