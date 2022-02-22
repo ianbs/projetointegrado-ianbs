@@ -1,10 +1,13 @@
 package com.ian.projetointegradoianbs.services;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.domain.Profissional;
+import com.ian.projetointegradoianbs.repository.EnderecoRepository;
 import com.ian.projetointegradoianbs.repository.ProfissionalRepository;
 import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
 import com.ian.projetointegradoianbs.services.exceptions.ObjetoNaoEncontradoException;
@@ -17,6 +20,9 @@ import org.springframework.stereotype.Service;
 public class ProfissionalServices {
     @Autowired
     private ProfissionalRepository profissionalRepository;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     public Profissional findUsuario(Integer id) throws IOException {
         Optional<Profissional> optional = profissionalRepository.findByUsuario(id);
@@ -35,6 +41,10 @@ public class ProfissionalServices {
     }
 
     public Profissional insertProfissional(Profissional profissional) {
+        for (Endereco endereco : profissional.getEnderecos()) {
+            endereco.setProfissionais(Arrays.asList(profissional));
+        }
+        enderecoRepository.saveAll(profissional.getEnderecos());
         profissional.setId(null);
         return profissionalRepository.save(profissional);
     }
