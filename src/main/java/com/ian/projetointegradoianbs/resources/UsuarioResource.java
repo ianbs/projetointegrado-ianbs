@@ -1,6 +1,5 @@
 package com.ian.projetointegradoianbs.resources;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.ian.projetointegradoianbs.domain.Profissional;

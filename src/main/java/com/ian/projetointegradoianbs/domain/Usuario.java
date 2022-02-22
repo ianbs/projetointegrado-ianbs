@@ -39,8 +39,10 @@ public class Usuario implements UserDetails {
     private String password;
 
     @OneToOne(mappedBy = "usuario")
-    @JoinTable(name = "user_profissional", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "profissional_id"))
     private Profissional profissional;
+
+    @OneToOne(mappedBy = "usuario")
+    private Colaborador colaborador;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

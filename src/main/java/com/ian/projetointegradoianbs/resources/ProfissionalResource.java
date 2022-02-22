@@ -1,6 +1,7 @@
 package com.ian.projetointegradoianbs.resources;
 
 import java.net.URI;
+import java.util.List;
 
 import com.ian.projetointegradoianbs.domain.Profissional;
 import com.ian.projetointegradoianbs.services.ProfissionalServices;
@@ -20,6 +21,11 @@ public class ProfissionalResource {
 
     @Autowired
     ProfissionalServices profissionalServices;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ResponseEntity<List<Profissional>> findAll() {
+        return ResponseEntity.ok(profissionalServices.findAllProfissionais());
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Profissional> findProfissional(@PathVariable Long id) {

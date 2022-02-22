@@ -1,6 +1,7 @@
 package com.ian.projetointegradoianbs.services;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import com.ian.projetointegradoianbs.domain.Profissional;
@@ -20,6 +21,11 @@ public class ProfissionalServices {
     public Profissional findUsuario(Integer id) throws IOException {
         Optional<Profissional> optional = profissionalRepository.findByUsuario(id);
         return optional.orElseThrow(() -> new IOException("Não encontrado"));
+    }
+
+    public List<Profissional> findAllProfissionais() {
+        List<Profissional> obj = profissionalRepository.findAll();
+        return obj;
     }
 
     public Profissional findProfissional(Long id) {
