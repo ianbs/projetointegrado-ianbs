@@ -1,12 +1,15 @@
 package com.ian.projetointegradoianbs.domain;
 
 import java.util.Collection;
+import java.util.ArrayList;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.ManyToMany;
+import javax.persistence.FetchType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -42,9 +45,12 @@ public class Usuario implements UserDetails {
     @OneToOne(mappedBy = "usuario")
     private Colaborador colaborador;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Permissoes> permissoes = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return permissoes;
     }
 
     @Override

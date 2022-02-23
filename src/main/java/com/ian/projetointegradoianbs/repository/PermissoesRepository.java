@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PermissoesRepository extends JpaRepository<Permissoes, Integer> {
+    Permissoes findByItem(String item);
 }

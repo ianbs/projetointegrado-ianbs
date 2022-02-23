@@ -2,6 +2,8 @@ package com.ian.projetointegradoianbs.security;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,10 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.google.gson.JsonObject;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,33 +37,43 @@ public class JWTValidateFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        String atributo = request.getHeader(HEADER_ATTR);
-        if (atributo == null) {
+
+        if (request.getServletPath().equals("/api/login")
+                || request.getServletPath().equals("/api/usuario/token/refresh")) {
             chain.doFilter(request, response);
-            return;
+        } else {
+            String authHeader = request.getHeader(HEADER_ATTR);
+            if (authHeader != null && authHeader.startsWith(PREFIX)) {
+                try {
+                    String token = authHeader.substring(PREFIX.length());
+                    Algorithm algorithm = Algorithm.HMAC512(JWTAuthFilter.TOKEN_PASSWORD.getBytes());
+                    JWTVerifier verifier = JWT.require(algorithm).build();
+                    DecodedJWT decodedJWT = verifier.verify(token);
+                    String username = decodedJWT.getSubject();
+                    String[] roles = decodedJWT.getClaim("permissoes").asArray(String.class);
+                    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                    Arrays.stream(roles).forEach(role -> {
+                        authorities.add(new SimpleGrantedAuthority(role));
+                    });
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            username, null, authorities);
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    chain.doFilter(request, response);
+                } catch (Exception e) {
+                    response.setHeader("error", e.getMessage());
+                    response.setStatus(403);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("error", e.getMessage());
+                    response.getWriter().write(jsonObject.toString());
+                    response.getWriter().flush();
+                }
+
+            } else {
+                chain.doFilter(request, response);
+            }
         }
-
-        if (!atributo.startsWith(PREFIX)) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        String token = atributo.replace(PREFIX, "");
-
-        UsernamePasswordAuthenticationToken authenticationToken = getAuthenticationToken(token);
-
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-        chain.doFilter(request, response);
-    }
-
-    private UsernamePasswordAuthenticationToken getAuthenticationToken(String token) {
-        String usuario = JWT.require(Algorithm.HMAC512(JWTAuthFilter.TOKEN_PASSWORD)).build().verify(token)
-                .getSubject();
-        if (usuario == null) {
-            return null;
-        }
-        return new UsernamePasswordAuthenticationToken(usuario, null, new ArrayList<>());
     }
 
 }

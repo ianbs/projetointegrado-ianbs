@@ -3,6 +3,7 @@ package com.ian.projetointegradoianbs.security;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.ian.projetointegradoianbs.domain.Usuario;
 
 import org.springframework.http.HttpMethod;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -68,21 +70,40 @@ public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-            Authentication authResult) throws IOException, ServletException {
+            Authentication authentication) throws IOException, ServletException {
 
-        Usuario usuarioData = (Usuario) authResult.getPrincipal();
+        Usuario usuarioData = (Usuario) authentication.getPrincipal();
 
         String token = JWT.create()
                 .withSubject(usuarioData.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRACAO))
+                .withIssuer(request.getRequestURI().toString())
+                .withClaim("permissoes",
+                        usuarioData.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toList()))
+                .sign(Algorithm.HMAC512(TOKEN_PASSWORD.getBytes()));
+
+        String refresh_token = JWT.create()
+                .withSubject(usuarioData.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRACAO))
+                .withIssuer(request.getRequestURI().toString())
                 .sign(Algorithm.HMAC512(TOKEN_PASSWORD));
 
         response.setContentType("application/json");
-        // response.setCharacterEncoding("UTF-8");
-        response.getWriter()
-                .write("{\"token\": \"" + token + "\", \"user\": { \"usuario_id\": " + usuarioData.getId()
-                        + ", \"usuario_nome\": \"" + usuarioData.getUsername() + "\" }" +
-                        "}");
+        response.setCharacterEncoding("UTF-8");
+        JsonObject jsonObject = new JsonObject();
+
+        jsonObject.addProperty("token", token);
+        jsonObject.addProperty("refresh_token", refresh_token);
+
+        JsonObject userJsonObject = new JsonObject();
+        userJsonObject.addProperty("id", usuarioData.getId());
+        userJsonObject.addProperty("nome", usuarioData.getUsername());
+        userJsonObject.addProperty("email", usuarioData.getEmail());
+
+        jsonObject.add("usuario", userJsonObject);
+
+        response.getWriter().write(jsonObject.toString());
         response.getWriter().flush();
     }
 
