@@ -33,6 +33,7 @@ public class Endereco implements Serializable {
     private Integer id;
     private String logradouro;
     private Integer numero;
+    private String cep;
     private String complemento;
     private Integer codigoIbge;
 
