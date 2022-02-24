@@ -34,6 +34,7 @@ public class Endereco implements Serializable {
     private String logradouro;
     private Integer numero;
     private String cep;
+    private String bairro;
     private String complemento;
     private Integer codigoIbge;
 
@@ -51,6 +52,10 @@ public class Endereco implements Serializable {
     @JsonIgnore
     @ManyToMany(mappedBy = "enderecos", cascade = CascadeType.ALL)
     private List<Paciente> pacientes = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "enderecos", cascade = CascadeType.ALL)
+    private List<Colaborador> colaborador = new ArrayList<>();
 
     public Endereco(Integer id, String logradouro, Integer numero, String complemento, Integer codigoIbge,
             TipoEndereco tipoEndereco, Cidade cidade) {
