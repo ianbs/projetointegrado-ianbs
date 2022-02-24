@@ -40,7 +40,6 @@ public class Endereco implements Serializable {
 
     private Integer tipoEndereco;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_cidade")
     private Cidade cidade;

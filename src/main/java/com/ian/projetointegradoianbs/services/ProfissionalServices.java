@@ -7,7 +7,9 @@ import java.util.Optional;
 
 import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.domain.Profissional;
+import com.ian.projetointegradoianbs.repository.CidadeRepository;
 import com.ian.projetointegradoianbs.repository.EnderecoRepository;
+import com.ian.projetointegradoianbs.repository.EstadoRepository;
 import com.ian.projetointegradoianbs.repository.ProfissionalRepository;
 import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
 import com.ian.projetointegradoianbs.services.exceptions.ObjetoNaoEncontradoException;
@@ -23,6 +25,12 @@ public class ProfissionalServices {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private CidadeRepository cidadeRepository;
+
+    @Autowired
+    private EstadoRepository estadoRepository;
 
     public Profissional findUsuario(Integer id) throws IOException {
         Optional<Profissional> optional = profissionalRepository.findByUsuario(id);
@@ -43,6 +51,8 @@ public class ProfissionalServices {
     public Profissional insertProfissional(Profissional profissional) {
         for (Endereco endereco : profissional.getEnderecos()) {
             endereco.setProfissionais(Arrays.asList(profissional));
+            cidadeRepository.save(endereco.getCidade());
+            estadoRepository.save(endereco.getCidade().getEstado());
         }
         enderecoRepository.saveAll(profissional.getEnderecos());
         profissional.setId(null);
