@@ -39,9 +39,11 @@ public class Usuario implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "usuario")
     private Profissional profissional;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "usuario")
     private Colaborador colaborador;
 
