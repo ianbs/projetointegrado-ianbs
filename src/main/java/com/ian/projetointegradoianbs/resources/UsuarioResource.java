@@ -61,12 +61,19 @@ public class UsuarioResource {
 
     @PostMapping("/")
     public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
-        Profissional profissional = profissionalServices.insertProfissional(usuario.getProfissional());
-        profissional.setUsuario(usuario);
-        usuario.setProfissional(profissional);
-        Colaborador colaborador = colaboradorServices.insertColaborador(usuario.getColaborador());
-        colaborador.setUsuario(usuario);
-        usuario.setColaborador(colaborador);
+
+        if (!(usuario.getProfissional().equals(new Profissional()))) {
+            Profissional profissional = profissionalServices.insertProfissional(usuario.getProfissional());
+            profissional.setUsuario(usuario);
+            usuario.setProfissional(profissional);
+        }
+
+        if (!(usuario.getColaborador().equals(new Colaborador()))) {
+            Colaborador colaborador = colaboradorServices.insertColaborador(usuario.getColaborador());
+            colaborador.setUsuario(usuario);
+            usuario.setColaborador(colaborador);
+        }
+
         usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/usuario").toUriString());
         return ResponseEntity.created(uri).body(usuarioServices.insertUsuario(usuario));
