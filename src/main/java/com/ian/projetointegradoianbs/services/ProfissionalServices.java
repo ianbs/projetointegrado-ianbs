@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.ian.projetointegradoianbs.domain.Cidade;
 import com.ian.projetointegradoianbs.domain.Endereco;
+import com.ian.projetointegradoianbs.domain.Estado;
 import com.ian.projetointegradoianbs.domain.Profissional;
 import com.ian.projetointegradoianbs.repository.CidadeRepository;
 import com.ian.projetointegradoianbs.repository.EnderecoRepository;
@@ -51,8 +53,10 @@ public class ProfissionalServices {
     public Profissional insertProfissional(Profissional profissional) {
         for (Endereco endereco : profissional.getEnderecos()) {
             endereco.setProfissionais(Arrays.asList(profissional));
-            cidadeRepository.save(endereco.getCidade());
-            estadoRepository.save(endereco.getCidade().getEstado());
+            Cidade cidade = cidadeRepository.save(endereco.getCidade());
+            endereco.setCidade(cidade);
+            Estado estado = estadoRepository.save(endereco.getCidade().getEstado());
+            cidade.setEstado(estado);
         }
         enderecoRepository.saveAll(profissional.getEnderecos());
         profissional.setId(null);

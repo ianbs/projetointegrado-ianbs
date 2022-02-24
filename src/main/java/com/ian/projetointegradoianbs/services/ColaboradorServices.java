@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.ian.projetointegradoianbs.domain.Cidade;
 import com.ian.projetointegradoianbs.domain.Colaborador;
 import com.ian.projetointegradoianbs.domain.Endereco;
+import com.ian.projetointegradoianbs.domain.Estado;
 import com.ian.projetointegradoianbs.repository.CidadeRepository;
 import com.ian.projetointegradoianbs.repository.ColaboradorRepository;
 import com.ian.projetointegradoianbs.repository.EnderecoRepository;
@@ -44,8 +46,11 @@ public class ColaboradorServices {
     public Colaborador insertColaborador(Colaborador colaborador) {
         for (Endereco endereco : colaborador.getEnderecos()) {
             endereco.setColaborador(Arrays.asList(colaborador));
-            cidadeRepository.save(endereco.getCidade());
-            estadoRepository.save(endereco.getCidade().getEstado());
+            endereco.setColaborador(Arrays.asList(colaborador));
+            Cidade cidade = cidadeRepository.save(endereco.getCidade());
+            endereco.setCidade(cidade);
+            Estado estado = estadoRepository.save(endereco.getCidade().getEstado());
+            cidade.setEstado(estado);
         }
         enderecoRepository.saveAll(colaborador.getEnderecos());
         colaborador.setId(null);
