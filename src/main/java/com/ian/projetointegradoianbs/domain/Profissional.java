@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -66,8 +65,7 @@ public class Profissional implements Serializable {
     @Setter
     private Date dataNascimento;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id")
+    @OneToOne(mappedBy = "profissional")
     private Usuario usuario;
 
     @ManyToMany

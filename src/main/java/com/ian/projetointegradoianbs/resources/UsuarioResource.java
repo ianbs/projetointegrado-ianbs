@@ -14,19 +14,14 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.JsonObject;
-import com.ian.projetointegradoianbs.domain.Colaborador;
 import com.ian.projetointegradoianbs.domain.Permissoes;
-import com.ian.projetointegradoianbs.domain.Profissional;
 import com.ian.projetointegradoianbs.domain.Usuario;
 import com.ian.projetointegradoianbs.security.JWTAuthFilter;
 import com.ian.projetointegradoianbs.security.JWTValidateFilter;
-import com.ian.projetointegradoianbs.services.ColaboradorServices;
-import com.ian.projetointegradoianbs.services.ProfissionalServices;
 import com.ian.projetointegradoianbs.services.UsuarioServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,41 +38,36 @@ import lombok.Data;
 public class UsuarioResource {
 
     @Autowired
-    private ProfissionalServices profissionalServices;
-
-    @Autowired
-    private ColaboradorServices colaboradorServices;
-
-    @Autowired
     private UsuarioServices usuarioServices;
-
-    @Autowired
-    private PasswordEncoder usuarioEncoder;
 
     @GetMapping("/")
     public ResponseEntity<List<Usuario>> findAll() {
         return ResponseEntity.ok().body(usuarioServices.listAll());
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
+    // @PostMapping("/")
+    // public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
 
-        if (!(usuario.getProfissional().equals(new Profissional()))) {
-            Profissional profissional = profissionalServices.insertProfissional(usuario.getProfissional());
-            profissional.setUsuario(usuario);
-            usuario.setProfissional(profissional);
-        }
+    // if (!(usuario.getProfissional().equals(new Profissional()))) {
+    // Profissional profissional =
+    // profissionalServices.insertProfissional(usuario.getProfissional());
+    // profissional.setUsuario(usuario);
+    // usuario.setProfissional(profissional);
+    // }
 
-        if (!(usuario.getColaborador().equals(new Colaborador()))) {
-            Colaborador colaborador = colaboradorServices.insertColaborador(usuario.getColaborador());
-            colaborador.setUsuario(usuario);
-            usuario.setColaborador(colaborador);
-        }
+    // if (!(usuario.getColaborador().equals(new Colaborador()))) {
+    // Colaborador colaborador =
+    // colaboradorServices.insertColaborador(usuario.getColaborador());
+    // colaborador.setUsuario(usuario);
+    // usuario.setColaborador(colaborador);
+    // }
 
-        usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/usuario").toUriString());
-        return ResponseEntity.created(uri).body(usuarioServices.insertUsuario(usuario));
-    }
+    // usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
+    // URI uri =
+    // URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/usuario").toUriString());
+    // return
+    // ResponseEntity.created(uri).body(usuarioServices.insertUsuario(usuario));
+    // }
 
     @PostMapping("/permissoes")
     public ResponseEntity<Permissoes> createRole(@RequestBody Permissoes permissoes) {

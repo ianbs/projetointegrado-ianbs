@@ -4,10 +4,13 @@ import java.net.URI;
 import java.util.List;
 
 import com.ian.projetointegradoianbs.domain.Profissional;
+import com.ian.projetointegradoianbs.domain.Usuario;
 import com.ian.projetointegradoianbs.services.ProfissionalServices;
+import com.ian.projetointegradoianbs.services.UsuarioServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +25,12 @@ public class ProfissionalResource {
     @Autowired
     ProfissionalServices profissionalServices;
 
+    @Autowired
+    private UsuarioServices usuarioServices;
+
+    @Autowired
+    private PasswordEncoder usuarioEncoder;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<List<Profissional>> findAll() {
         return ResponseEntity.ok(profissionalServices.findAllProfissionais());
@@ -35,6 +44,9 @@ public class ProfissionalResource {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Profissional> insertProfissional(@RequestBody Profissional profissional) {
+        Usuario usuario = usuarioServices.insertUsuario(profissional.getUsuario());
+        usuario.setProfissional(profissional);
+        usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
         Profissional objProfissional = profissionalServices.insertProfissional(profissional);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objProfissional.getId())
                 .toUri();

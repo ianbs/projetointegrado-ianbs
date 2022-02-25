@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,9 +40,10 @@ public class Endereco implements Serializable {
     private String complemento;
     private Integer codigoIbge;
 
-    private Integer tipoEndereco;
+    @Enumerated(EnumType.ORDINAL)
+    private TipoEndereco tipoEndereco;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_cidade")
     private Cidade cidade;
 
@@ -63,7 +66,7 @@ public class Endereco implements Serializable {
         this.numero = numero;
         this.complemento = complemento;
         this.codigoIbge = codigoIbge;
-        this.tipoEndereco = tipoEndereco.getId();
+        this.tipoEndereco = tipoEndereco;
         this.cidade = cidade;
     }
 

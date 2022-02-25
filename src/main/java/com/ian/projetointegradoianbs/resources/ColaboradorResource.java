@@ -4,10 +4,13 @@ import java.net.URI;
 import java.util.List;
 
 import com.ian.projetointegradoianbs.domain.Colaborador;
+import com.ian.projetointegradoianbs.domain.Usuario;
 import com.ian.projetointegradoianbs.services.ColaboradorServices;
+import com.ian.projetointegradoianbs.services.UsuarioServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,12 @@ public class ColaboradorResource {
     @Autowired
     ColaboradorServices colaboradorServices;
 
+    @Autowired
+    private UsuarioServices usuarioServices;
+
+    @Autowired
+    private PasswordEncoder usuarioEncoder;
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Colaborador> findColaborador(@PathVariable Long id) {
         Colaborador objPessoa = colaboradorServices.findColaborador(id);
@@ -33,8 +42,11 @@ public class ColaboradorResource {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Colaborador> insertColaborador(@RequestBody Colaborador Colaborador) {
-        Colaborador objColaborador = colaboradorServices.insertColaborador(Colaborador);
+    public ResponseEntity<Colaborador> insertColaborador(@RequestBody Colaborador colaborador) {
+        Usuario usuario = usuarioServices.insertUsuario(colaborador.getUsuario());
+        usuario.setColaborador(colaborador);
+        usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
+        Colaborador objColaborador = colaboradorServices.insertColaborador(colaborador);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objColaborador.getId())
                 .toUri();
         return ResponseEntity.created(uri).build();

@@ -3,14 +3,17 @@ package com.ian.projetointegradoianbs.domain;
 import java.util.Collection;
 import java.util.ArrayList;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.ManyToMany;
 import javax.persistence.FetchType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -40,11 +43,13 @@ public class Usuario implements UserDetails {
     private String password;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "usuario")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "profissional_id")
     private Profissional profissional;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "usuario")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "colaborador_id")
     private Colaborador colaborador;
 
     @ManyToMany(fetch = FetchType.EAGER)

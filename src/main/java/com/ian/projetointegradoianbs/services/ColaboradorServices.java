@@ -1,17 +1,11 @@
 package com.ian.projetointegradoianbs.services;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.ian.projetointegradoianbs.domain.Cidade;
 import com.ian.projetointegradoianbs.domain.Colaborador;
 import com.ian.projetointegradoianbs.domain.Endereco;
-import com.ian.projetointegradoianbs.domain.Estado;
-import com.ian.projetointegradoianbs.repository.CidadeRepository;
 import com.ian.projetointegradoianbs.repository.ColaboradorRepository;
-import com.ian.projetointegradoianbs.repository.EnderecoRepository;
-import com.ian.projetointegradoianbs.repository.EstadoRepository;
 import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
 import com.ian.projetointegradoianbs.services.exceptions.ObjetoNaoEncontradoException;
 
@@ -24,13 +18,7 @@ public class ColaboradorServices {
     private ColaboradorRepository colaboradorRepository;
 
     @Autowired
-    private EnderecoRepository enderecoRepository;
-
-    @Autowired
-    private CidadeRepository cidadeRepository;
-
-    @Autowired
-    private EstadoRepository estadoRepository;
+    private EnderecoServices enderecoServices;
 
     public List<Colaborador> findAllColaboradores() {
         List<Colaborador> obj = colaboradorRepository.findAll();
@@ -44,16 +32,8 @@ public class ColaboradorServices {
     }
 
     public Colaborador insertColaborador(Colaborador colaborador) {
-        for (Endereco endereco : colaborador.getEnderecos()) {
-            endereco.setColaborador(Arrays.asList(colaborador));
-            endereco.setColaborador(Arrays.asList(colaborador));
-            Cidade cidade = cidadeRepository.save(endereco.getCidade());
-            endereco.setCidade(cidade);
-            Estado estado = estadoRepository.save(endereco.getCidade().getEstado());
-            cidade.setEstado(estado);
-        }
-        enderecoRepository.saveAll(colaborador.getEnderecos());
-        colaborador.setId(null);
+        List<Endereco> enderecos = enderecoServices.insertAllEnderecos(colaborador.getEnderecos());
+        colaborador.setEnderecos(enderecos);
         return colaboradorRepository.save(colaborador);
     }
 

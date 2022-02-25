@@ -13,12 +13,12 @@ public enum TipoEndereco {
         this.setDescricao(descricao);
     }
 
-    public static TipoEndereco toEnum(Integer id) {
-        if (id == null) {
+    public static TipoEndereco toEnum(Integer codigo) {
+        if (codigo == null) {
             return null;
         }
         for (TipoEndereco tipoEndereco : TipoEndereco.values()) {
-            if (id.equals(tipoEndereco.getId())) {
+            if (codigo.equals(tipoEndereco.getId())) {
                 return tipoEndereco;
             }
         }
@@ -34,7 +34,7 @@ public enum TipoEndereco {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
