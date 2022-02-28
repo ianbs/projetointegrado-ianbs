@@ -37,4 +37,14 @@ public class CidadeServices {
         cidade.setEstado(estado);
         return cidadeRepository.save(cidade);
     }
+
+    public Cidade updateCidade(Cidade cidade) {
+        findCidade(cidade);
+        return cidadeRepository.save(cidade);
+    }
+
+    public void deleteEstado(Cidade cidade) {
+        findCidade(cidade);
+        cidadeRepository.delete(cidade);
+    }
 }
