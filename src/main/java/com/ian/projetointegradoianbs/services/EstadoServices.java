@@ -1,5 +1,6 @@
 package com.ian.projetointegradoianbs.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.ian.projetointegradoianbs.domain.Estado;
@@ -13,6 +14,11 @@ public class EstadoServices {
     @Autowired
     private EstadoRepository estadoRepository;
 
+    public List<Estado> findAll() {
+        List<Estado> estados = estadoRepository.findAll();
+        return estados;
+    }
+
     public Estado findEstado(Estado estado) {
         Optional<Estado> optional = estadoRepository.findById(estado.getId());
         return optional.orElse(null);
@@ -20,6 +26,16 @@ public class EstadoServices {
 
     public Estado insertEstado(Estado estado) {
         return estadoRepository.save(estado);
+    }
+
+    public Estado updateEstado(Estado estado) {
+        findEstado(estado);
+        return estadoRepository.save(estado);
+    }
+
+    public void deleteEstado(Estado estado) {
+        findEstado(estado);
+        estadoRepository.delete(estado);
     }
 
 }

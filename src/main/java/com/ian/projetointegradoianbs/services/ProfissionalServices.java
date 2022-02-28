@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.domain.Profissional;
 import com.ian.projetointegradoianbs.repository.ProfissionalRepository;
 import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
@@ -19,12 +18,9 @@ public class ProfissionalServices {
     @Autowired
     private ProfissionalRepository profissionalRepository;
 
-    @Autowired
-    private EnderecoServices enderecoServices;
-
     public Profissional findUsuario(Integer id) throws IOException {
         Optional<Profissional> optional = profissionalRepository.findByUsuario(id);
-        return optional.orElseThrow(() -> new IOException("Não encontrado"));
+        return optional.orElseThrow(() -> new IOException("Profissional não encontrado"));
     }
 
     public List<Profissional> findAllProfissionais() {
@@ -39,8 +35,6 @@ public class ProfissionalServices {
     }
 
     public Profissional insertProfissional(Profissional profissional) {
-        List<Endereco> enderecos = enderecoServices.insertAllEnderecos(profissional.getEnderecos());
-        profissional.setEnderecos(enderecos);
         return profissionalRepository.save(profissional);
     }
 
@@ -49,10 +43,9 @@ public class ProfissionalServices {
         return profissionalRepository.save(profissional);
     }
 
-    public void deleteProfissional(Long id) {
-        findProfissional(id);
+    public void deleteProfissional(Profissional profissional) {
         try {
-            profissionalRepository.deleteById(id);
+            profissionalRepository.deleteById(profissional.getId());
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityException("Não é possivel excluir.");
         }

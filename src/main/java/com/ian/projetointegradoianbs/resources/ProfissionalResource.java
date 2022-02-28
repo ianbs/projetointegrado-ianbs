@@ -3,8 +3,10 @@ package com.ian.projetointegradoianbs.resources;
 import java.net.URI;
 import java.util.List;
 
+import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.domain.Profissional;
 import com.ian.projetointegradoianbs.domain.Usuario;
+import com.ian.projetointegradoianbs.services.EnderecoServices;
 import com.ian.projetointegradoianbs.services.ProfissionalServices;
 import com.ian.projetointegradoianbs.services.UsuarioServices;
 
@@ -29,6 +31,9 @@ public class ProfissionalResource {
     private UsuarioServices usuarioServices;
 
     @Autowired
+    private EnderecoServices enderecoServices;
+
+    @Autowired
     private PasswordEncoder usuarioEncoder;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -47,7 +52,12 @@ public class ProfissionalResource {
         Usuario usuario = usuarioServices.insertUsuario(profissional.getUsuario());
         usuario.setProfissional(profissional);
         usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
+
+        List<Endereco> enderecos = enderecoServices.insertAllEnderecos(profissional.getEnderecos());
+        profissional.setEnderecos(enderecos);
+
         Profissional objProfissional = profissionalServices.insertProfissional(profissional);
+
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objProfissional.getId())
                 .toUri();
         return ResponseEntity.created(uri).build();
@@ -56,13 +66,25 @@ public class ProfissionalResource {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Void> updateProfissional(@RequestBody Profissional profissional, @PathVariable Long id) {
         profissional.setId(id);
-        profissional = profissionalServices.updateProfissional(profissional);
+        Profissional profissionalToUpdate = profissionalServices.updateProfissional(profissional);
+
+        List<Endereco> enderecos = enderecoServices.updateAllEnderecos(profissional.getEnderecos());
+        profissionalToUpdate.setEnderecos(enderecos);
+
+        Usuario usuario = usuarioServices.updateUsuario(profissional.getUsuario()); // Salva o usuario
+        profissionalToUpdate.setUsuario(usuario);
+
         return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteProfissional(@PathVariable Long id) {
-        profissionalServices.deleteProfissional(id);
+        Profissional profissional = profissionalServices.findProfissional(id);
+
+        enderecoServices.deleteAllEnderecos(profissional.getEnderecos());
+        profissionalServices.deleteProfissional(profissional);
+        usuarioServices.deleteUsuario(profissional.getUsuario().getId());
+
         return ResponseEntity.noContent().build();
     }
 

@@ -1,5 +1,6 @@
 package com.ian.projetointegradoianbs.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.ian.projetointegradoianbs.domain.Cidade;
@@ -16,6 +17,11 @@ public class CidadeServices {
 
     @Autowired
     private EstadoServices estadoServices;
+
+    public List<Cidade> findAllCidades() {
+        List<Cidade> cidades = cidadeRepository.findAll();
+        return cidades;
+    }
 
     public Cidade findCidade(Cidade cidade) {
         Optional<Cidade> optional = cidadeRepository.findById(cidade.getId());

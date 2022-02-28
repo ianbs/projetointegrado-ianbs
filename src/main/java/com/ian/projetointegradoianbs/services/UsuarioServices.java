@@ -16,6 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,6 +24,9 @@ public class UsuarioServices implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder usuarioEncoder;
 
     @Autowired
     private PermissoesRepository permissoesRepository;
@@ -52,6 +56,17 @@ public class UsuarioServices implements UserDetailsService {
 
     public Usuario insertUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
+    }
+
+    public Usuario updateUsuario(Usuario usuario) {
+        find(usuario.getId());
+        usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
+        return usuarioRepository.save(usuario);
+    }
+
+    public void deleteUsuario(Long id) {
+        Usuario usuario = find(id);
+        usuarioRepository.delete(usuario);
     }
 
     public Permissoes insertPermissoes(Permissoes permissoes) {

@@ -1,10 +1,10 @@
 package com.ian.projetointegradoianbs.services;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import com.ian.projetointegradoianbs.domain.Colaborador;
-import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.repository.ColaboradorRepository;
 import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
 import com.ian.projetointegradoianbs.services.exceptions.ObjetoNaoEncontradoException;
@@ -17,8 +17,10 @@ public class ColaboradorServices {
     @Autowired
     private ColaboradorRepository colaboradorRepository;
 
-    @Autowired
-    private EnderecoServices enderecoServices;
+    public Colaborador findUsuario(Integer id) throws IOException {
+        Optional<Colaborador> optional = colaboradorRepository.findByUsuario(id);
+        return optional.orElseThrow(() -> new IOException("Colaborador não encontrado"));
+    }
 
     public List<Colaborador> findAllColaboradores() {
         List<Colaborador> obj = colaboradorRepository.findAll();
@@ -32,8 +34,6 @@ public class ColaboradorServices {
     }
 
     public Colaborador insertColaborador(Colaborador colaborador) {
-        List<Endereco> enderecos = enderecoServices.insertAllEnderecos(colaborador.getEnderecos());
-        colaborador.setEnderecos(enderecos);
         return colaboradorRepository.save(colaborador);
     }
 
@@ -42,14 +42,11 @@ public class ColaboradorServices {
         return colaboradorRepository.save(colaborador);
     }
 
-    public void deleteColaborador(Long id) {
-        findColaborador(id);
-
+    public void deleteColaborador(Colaborador colaborador) {
         try {
-            colaboradorRepository.deleteById(id);
+            colaboradorRepository.deleteById(colaborador.getId());
         } catch (Exception e) {
-            throw new DataIntegrityException("Não é possivel excluir");
+            throw new DataIntegrityException("Não é possivel excluir. Erro: " + e.getMessage());
         }
-
     }
 }

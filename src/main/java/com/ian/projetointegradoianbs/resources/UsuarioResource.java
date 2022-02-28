@@ -45,29 +45,11 @@ public class UsuarioResource {
         return ResponseEntity.ok().body(usuarioServices.listAll());
     }
 
-    // @PostMapping("/")
-    // public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
-
-    // if (!(usuario.getProfissional().equals(new Profissional()))) {
-    // Profissional profissional =
-    // profissionalServices.insertProfissional(usuario.getProfissional());
-    // profissional.setUsuario(usuario);
-    // usuario.setProfissional(profissional);
-    // }
-
-    // if (!(usuario.getColaborador().equals(new Colaborador()))) {
-    // Colaborador colaborador =
-    // colaboradorServices.insertColaborador(usuario.getColaborador());
-    // colaborador.setUsuario(usuario);
-    // usuario.setColaborador(colaborador);
-    // }
-
-    // usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
-    // URI uri =
-    // URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/usuario").toUriString());
-    // return
-    // ResponseEntity.created(uri).body(usuarioServices.insertUsuario(usuario));
-    // }
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Usuario> find(@PathVariable Long id) {
+        Usuario objPessoa = usuarioServices.find(id);
+        return ResponseEntity.ok().body(objPessoa);
+    }
 
     @PostMapping("/permissoes")
     public ResponseEntity<Permissoes> createRole(@RequestBody Permissoes permissoes) {
@@ -133,12 +115,6 @@ public class UsuarioResource {
         } else {
             throw new RuntimeException("Refresh token não está presente");
         }
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Usuario> find(@PathVariable Long id) {
-        Usuario objPessoa = usuarioServices.find(id);
-        return ResponseEntity.ok().body(objPessoa);
     }
 
 }

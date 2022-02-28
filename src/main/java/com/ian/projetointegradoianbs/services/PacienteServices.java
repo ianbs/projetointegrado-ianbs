@@ -1,12 +1,9 @@
 package com.ian.projetointegradoianbs.services;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.domain.Paciente;
-import com.ian.projetointegradoianbs.repository.EnderecoRepository;
 import com.ian.projetointegradoianbs.repository.PacienteRepository;
 import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
 import com.ian.projetointegradoianbs.services.exceptions.ObjetoNaoEncontradoException;
@@ -20,9 +17,6 @@ public class PacienteServices {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
-
     public List<Paciente> findAllPacientes() {
         List<Paciente> obj = pacienteRepository.findAll();
         return obj;
@@ -35,11 +29,6 @@ public class PacienteServices {
     }
 
     public Paciente insertPaciente(Paciente paciente) {
-        for (Endereco endereco : paciente.getEnderecos()) {
-            endereco.setPacientes(Arrays.asList(paciente));
-        }
-        enderecoRepository.saveAll(paciente.getEnderecos());
-        paciente.setId(null);
         return pacienteRepository.save(paciente);
     }
 
@@ -48,10 +37,9 @@ public class PacienteServices {
         return pacienteRepository.save(Paciente);
     }
 
-    public void deletePaciente(Long id) {
-        findPaciente(id);
+    public void deletePaciente(Paciente paciente) {
         try {
-            pacienteRepository.deleteById(id);
+            pacienteRepository.deleteById(paciente.getId());
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityException("Não é possivel excluir.");
         }
