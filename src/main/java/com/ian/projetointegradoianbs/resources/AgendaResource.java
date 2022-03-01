@@ -45,7 +45,7 @@ public class AgendaResource {
         return ResponseEntity.ok().body(agendaServices.findAllAgenda());
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/descricao", method = RequestMethod.GET)
     public ResponseEntity<Agenda> findAgendaByDescricao(@RequestBody FindDescricao findDescricao) {
         Agenda agenda = agendaServices.findAgendaByDescricao(findDescricao.getDescricao());
         return ResponseEntity.ok().body(agenda);
