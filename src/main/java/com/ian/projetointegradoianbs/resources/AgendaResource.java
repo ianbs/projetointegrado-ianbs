@@ -3,7 +3,6 @@ package com.ian.projetointegradoianbs.resources;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import com.ian.projetointegradoianbs.domain.Agenda;
 import com.ian.projetointegradoianbs.domain.Colaborador;
