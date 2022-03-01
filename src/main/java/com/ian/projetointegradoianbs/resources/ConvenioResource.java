@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import lombok.Data;
+
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @RestController
@@ -33,9 +36,9 @@ public class ConvenioResource {
         return ResponseEntity.ok().body(convenio);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Convenio> findConvenioByName(@PathVariable String nome) {
-        Convenio convenio = convenioServices.findConvenioByName(nome);
+    @RequestMapping(value = "/nome", method = RequestMethod.GET)
+    public ResponseEntity<Convenio> findConvenioByName(@RequestBody FindNome findNome) {
+        Convenio convenio = convenioServices.findConvenioByName(findNome.getNome());
         return ResponseEntity.ok().body(convenio);
     }
 
@@ -63,4 +66,9 @@ public class ConvenioResource {
         return ResponseEntity.noContent().build();
     }
 
+}
+
+@Data
+class FindNome {
+    private String nome;
 }
