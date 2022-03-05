@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.ian.projetointegradoianbs.domain.Agenda;
-import com.ian.projetointegradoianbs.domain.Colaborador;
-import com.ian.projetointegradoianbs.domain.Paciente;
 import com.ian.projetointegradoianbs.domain.Profissional;
 import com.ian.projetointegradoianbs.repository.AgendaRepository;
 import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
@@ -19,6 +17,9 @@ import org.springframework.stereotype.Service;
 public class AgendaServices {
     @Autowired
     private AgendaRepository agendaRepository;
+
+    @Autowired
+    private ProfissionalServices profissionalServices;
 
     public List<Agenda> findAllAgenda() {
         List<Agenda> agendas = agendaRepository.findAll();
@@ -41,30 +42,23 @@ public class AgendaServices {
                 .orElseThrow(() -> new ObjetoNaoEncontradoException("Nenhum agendamento encontrado nesta data."));
     }
 
-    public List<Agenda> findAgendaByPaciente(Paciente paciente) {
-        Optional<List<Agenda>> optional = agendaRepository.findByPaciente(paciente);
-        return optional.orElseThrow(
-                () -> new ObjetoNaoEncontradoException("Nenhum agendamento encontrado para o paciente informado."));
-    }
-
-    public List<Agenda> findAgendaByColaborador(Colaborador colaborador) {
-        Optional<List<Agenda>> optional = agendaRepository.findByColaborador(colaborador);
-        return optional.orElseThrow(
-                () -> new ObjetoNaoEncontradoException("Nenhum agendamento foi feito pelo colaborador informado."));
-    }
-
-    public List<Agenda> findAgendaByProfissional(Profissional profissional) {
+    public List<Agenda> findAgendaByProfissional(Long id) {
+        Profissional profissional = profissionalServices.findProfissional(id);
         Optional<List<Agenda>> optional = agendaRepository.findByProfissional(profissional);
         return optional.orElseThrow(
                 () -> new ObjetoNaoEncontradoException("Nenhum agendamento encontrado para o profissional informado."));
     }
 
     public Agenda insertAgenda(Agenda agenda) {
+        Profissional profissional = profissionalServices.findProfissional(agenda.getProfissional().getId());
+        agenda.setProfissional(profissional);
         return agendaRepository.save(agenda);
     }
 
     public Agenda updateAgenda(Agenda agenda) {
         findAgenda(agenda.getId());
+        Profissional profissional = profissionalServices.findProfissional(agenda.getProfissional().getId());
+        agenda.setProfissional(profissional);
         return agendaRepository.save(agenda);
     }
 

@@ -5,13 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.ian.projetointegradoianbs.domain.Agenda;
-import com.ian.projetointegradoianbs.domain.Colaborador;
-import com.ian.projetointegradoianbs.domain.Paciente;
-import com.ian.projetointegradoianbs.domain.Profissional;
 import com.ian.projetointegradoianbs.services.AgendaServices;
-import com.ian.projetointegradoianbs.services.ColaboradorServices;
-import com.ian.projetointegradoianbs.services.PacienteServices;
-import com.ian.projetointegradoianbs.services.ProfissionalServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +25,6 @@ public class AgendaResource {
     @Autowired
     AgendaServices agendaServices;
 
-    @Autowired
-    private ProfissionalServices profissionalServices;
-
-    @Autowired
-    private ColaboradorServices colaboradorServices;
-
-    @Autowired
-    private PacienteServices pacienteServices;
-
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity<List<Agenda>> findAllAgenda() {
         return ResponseEntity.ok().body(agendaServices.findAllAgenda());
@@ -51,9 +36,22 @@ public class AgendaResource {
         return ResponseEntity.ok().body(agenda);
     }
 
+    @RequestMapping(value = "/data", method = RequestMethod.GET)
+    public ResponseEntity<List<Agenda>> findAgendaByData(@RequestBody FindData findData) {
+        List<Agenda> agenda = agendaServices.findAgendaByData(findData.getData());
+        return ResponseEntity.ok().body(agenda);
+    }
+
+    @RequestMapping(value = "/profissional/{id}", method = RequestMethod.GET)
+    public ResponseEntity<List<Agenda>> findAgendaByProfissional(@PathVariable Long id) {
+        List<Agenda> agenda = agendaServices.findAgendaByProfissional(id);
+        return ResponseEntity.ok().body(agenda);
+    }
+
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<Agenda> insertAgenda(@RequestBody Agenda agenda) {
         Agenda objAgenda = agendaServices.insertAgenda(agenda);
+
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objAgenda.getId())
                 .toUri();
         return ResponseEntity.created(uri).build();
@@ -63,16 +61,7 @@ public class AgendaResource {
     public ResponseEntity<Agenda> updateAgenda(@RequestBody Agenda agenda, @PathVariable Integer id) {
         Agenda agendaToUpdate = agendaServices.updateAgenda(agenda);
 
-        Profissional profissional = profissionalServices.findProfissional(agenda.getProfissional().getId());
-        agendaToUpdate.setProfissional(profissional);
-
-        Colaborador colaborador = colaboradorServices.findColaborador(agenda.getColaborador().getId());
-        agendaToUpdate.setColaborador(colaborador);
-
-        Paciente paciente = pacienteServices.findPaciente(agenda.getPaciente().getId());
-        agendaToUpdate.setPaciente(paciente);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(agendaToUpdate);
     }
 
     public ResponseEntity<Void> deleteAgenda(@PathVariable Integer id) {

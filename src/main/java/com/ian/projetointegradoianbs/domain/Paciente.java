@@ -12,9 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,9 +56,5 @@ public class Paciente implements Serializable {
     @ManyToMany
     @JoinTable(name = "PACIENTES_ENDERECOS", joinColumns = @JoinColumn(name = "id_pacientes"), inverseJoinColumns = @JoinColumn(name = "id_endereco"))
     private List<Endereco> enderecos = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "paciente")
-    private List<Agenda> agenda = new ArrayList<>();
 
 }

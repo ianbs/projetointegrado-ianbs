@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,19 +29,14 @@ public class Agenda implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String titulo;
+    @Column(length = 1024)
     private String descricao;
     private LocalDate data;
+    private String horario;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_profissional")
     private Profissional profissional;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_colaborador")
-    private Colaborador colaborador;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_paciente")
-    private Paciente paciente;
 
 }

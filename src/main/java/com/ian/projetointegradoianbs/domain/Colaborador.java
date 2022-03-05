@@ -12,10 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -61,7 +58,4 @@ public class Colaborador implements Serializable {
     @JoinTable(name = "COLABORADOR_ENDERECOS", joinColumns = @JoinColumn(name = "id_colaborador"), inverseJoinColumns = @JoinColumn(name = "id_endereco"))
     private List<Endereco> enderecos = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "colaborador")
-    private List<Agenda> agenda = new ArrayList<>();
 }
