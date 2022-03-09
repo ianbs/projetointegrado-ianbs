@@ -3,6 +3,7 @@ package com.ian.projetointegradoianbs.services;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.ian.projetointegradoianbs.domain.Colaborador;
 import com.ian.projetointegradoianbs.repository.ColaboradorRepository;
@@ -17,34 +18,34 @@ public class ColaboradorServices {
     @Autowired
     private ColaboradorRepository colaboradorRepository;
 
-    public Colaborador findUsuario(Integer id) throws IOException {
+    public Colaborador findUsuario(UUID id) throws IOException {
         Optional<Colaborador> optional = colaboradorRepository.findByUsuario(id);
         return optional.orElseThrow(() -> new IOException("Colaborador não encontrado"));
     }
 
-    public List<Colaborador> findAllColaboradores() {
+    public List<Colaborador> findAll() {
         List<Colaborador> obj = colaboradorRepository.findAll();
         return obj;
     }
 
-    public Colaborador findColaborador(Long id) {
+    public Colaborador findById(UUID id) {
         Optional<Colaborador> optional = colaboradorRepository.findById(id);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException(
                 "Objeto não encontrado. ID: " + id + ", Tipo: " + Colaborador.class.getName()));
     }
 
-    public Colaborador insertColaborador(Colaborador colaborador) {
+    public Colaborador save(Colaborador colaborador) {
         return colaboradorRepository.save(colaborador);
     }
 
-    public Colaborador updateColaborador(Colaborador colaborador) {
-        findColaborador(colaborador.getId());
+    public Colaborador update(Colaborador colaborador) {
+        findById(colaborador.getId());
         return colaboradorRepository.save(colaborador);
     }
 
-    public void deleteColaborador(Colaborador colaborador) {
+    public void delete(UUID id) {
         try {
-            colaboradorRepository.deleteById(colaborador.getId());
+            colaboradorRepository.deleteById(id);
         } catch (Exception e) {
             throw new DataIntegrityException("Não é possivel excluir. Erro: " + e.getMessage());
         }

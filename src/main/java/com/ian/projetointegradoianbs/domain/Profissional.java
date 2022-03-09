@@ -1,11 +1,16 @@
 package com.ian.projetointegradoianbs.domain;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,15 +19,20 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.ian.projetointegradoianbs.domain.enuns.TipoSexo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @Entity
@@ -30,45 +40,44 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Profissional implements Serializable {
+
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    @Setter
-    private Long id;
-    @Getter
-    @Setter
-    private String razaoSocial;
-    @Getter
-    @Setter
-    private String conselho;
-    @Getter
-    @Setter
-    private String numeroConselho;
-    @Getter
-    @Setter
-    private String especialidade;
-    @Getter
-    @Setter
-    private Integer cbo;
-    @Getter
-    @Setter
-    private String cpf;
-    @Getter
-    @Setter
-    private String cnpj;
-    @Getter
-    @Setter
-    private String rg;
-    @Getter
-    @Setter
-    private Date dataVinculo;
-    @Getter
-    @Setter
-    private Date dataNascimento;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
-    @OneToOne(mappedBy = "profissional")
+    @NotBlank
+    private String nome;
+
+    @NotBlank
+    private String conselho;
+
+    @NotBlank
+    private String numeroConselho;
+
+    @NotBlank
+    private String especialidade;
+
+    private Integer cbo;
+
+    @NotBlank
+    private String cpf;
+
+    @NotBlank
+    private String rg;
+
+    private LocalDateTime dataVinculo;
+
+    @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate dataNascimento;
+
+    @Enumerated(EnumType.ORDINAL)
+    private TipoSexo sexo;
+
+    @OneToOne(mappedBy = "profissional", cascade = CascadeType.ALL)
     private Usuario usuario;
 
     @ManyToMany

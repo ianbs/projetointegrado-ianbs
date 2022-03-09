@@ -3,6 +3,7 @@ package com.ian.projetointegradoianbs.services;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.ian.projetointegradoianbs.domain.Agenda;
 import com.ian.projetointegradoianbs.domain.Profissional;
@@ -21,48 +22,47 @@ public class AgendaServices {
     @Autowired
     private ProfissionalServices profissionalServices;
 
-    public List<Agenda> findAllAgenda() {
-        List<Agenda> agendas = agendaRepository.findAll();
-        return agendas;
+    public List<Agenda> findAll() {
+        return agendaRepository.findAll();
     }
 
-    public Agenda findAgenda(Integer id) {
+    public Agenda findById(UUID id) {
         Optional<Agenda> optional = agendaRepository.findById(id);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException("Agendamento não encontrado"));
     }
 
-    public Agenda findAgendaByDescricao(String descricao) {
+    public Agenda findByDescricao(String descricao) {
         Optional<Agenda> optional = agendaRepository.findByDescricao(descricao);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException("Nenhuma agedamento encontrado."));
     }
 
-    public List<Agenda> findAgendaByData(LocalDate data) {
+    public List<Agenda> findByData(LocalDate data) {
         Optional<List<Agenda>> optional = agendaRepository.findByData(data);
         return optional
                 .orElseThrow(() -> new ObjetoNaoEncontradoException("Nenhum agendamento encontrado nesta data."));
     }
 
-    public List<Agenda> findAgendaByProfissional(Long id) {
-        Profissional profissional = profissionalServices.findProfissional(id);
+    public List<Agenda> findByProfissional(UUID id) {
+        Profissional profissional = profissionalServices.findById(id);
         Optional<List<Agenda>> optional = agendaRepository.findByProfissional(profissional);
         return optional.orElseThrow(
                 () -> new ObjetoNaoEncontradoException("Nenhum agendamento encontrado para o profissional informado."));
     }
 
-    public Agenda insertAgenda(Agenda agenda) {
-        Profissional profissional = profissionalServices.findProfissional(agenda.getProfissional().getId());
+    public Agenda save(Agenda agenda) {
+        Profissional profissional = profissionalServices.findById(agenda.getProfissional().getId());
         agenda.setProfissional(profissional);
         return agendaRepository.save(agenda);
     }
 
-    public Agenda updateAgenda(Agenda agenda) {
-        findAgenda(agenda.getId());
-        Profissional profissional = profissionalServices.findProfissional(agenda.getProfissional().getId());
+    public Agenda update(Agenda agenda) {
+        findById(agenda.getId());
+        Profissional profissional = profissionalServices.findById(agenda.getProfissional().getId());
         agenda.setProfissional(profissional);
         return agendaRepository.save(agenda);
     }
 
-    public void deleteAgenda(Integer id) {
+    public void delete(UUID id) {
         try {
             agendaRepository.deleteById(id);
         } catch (DataIntegrityException e) {

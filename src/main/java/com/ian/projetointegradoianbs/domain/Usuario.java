@@ -2,6 +2,7 @@ package com.ian.projetointegradoianbs.domain;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -32,8 +33,8 @@ public class Usuario implements UserDetails {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     private String username;
 
@@ -90,8 +91,8 @@ public class Usuario implements UserDetails {
         return true;
     }
 
-    public Long getId() {
-        return id;
+    public UUID getId() {
+        return this.id;
     }
 
 }

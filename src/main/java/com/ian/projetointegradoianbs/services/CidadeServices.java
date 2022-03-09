@@ -18,17 +18,16 @@ public class CidadeServices {
     @Autowired
     private EstadoServices estadoServices;
 
-    public List<Cidade> findAllCidades() {
-        List<Cidade> cidades = cidadeRepository.findAll();
-        return cidades;
+    public List<Cidade> findAll() {
+        return cidadeRepository.findAll();
     }
 
-    public Cidade findCidade(Cidade cidade) {
+    public Cidade find(Cidade cidade) {
         Optional<Cidade> optional = cidadeRepository.findById(cidade.getId());
         return optional.orElse(null);
     }
 
-    public Cidade findCidadeByNome(Cidade cidade) {
+    public Cidade findByNome(Cidade cidade) {
         return cidadeRepository.findByNome(cidade.getNome());
     }
 
@@ -39,12 +38,12 @@ public class CidadeServices {
     }
 
     public Cidade updateCidade(Cidade cidade) {
-        findCidade(cidade);
+        find(cidade);
         return cidadeRepository.save(cidade);
     }
 
     public void deleteEstado(Cidade cidade) {
-        findCidade(cidade);
+        find(cidade);
         cidadeRepository.delete(cidade);
     }
 }

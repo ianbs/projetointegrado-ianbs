@@ -2,6 +2,7 @@ package com.ian.projetointegradoianbs.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.ian.projetointegradoianbs.domain.Convenio;
 import com.ian.projetointegradoianbs.repository.ConvenioRepository;
@@ -18,31 +19,31 @@ public class ConvenioServices {
     @Autowired
     private ConvenioRepository convenioRepository;
 
-    public List<Convenio> findAllConvenios() {
+    public List<Convenio> findAll() {
         List<Convenio> convenios = convenioRepository.findAll();
         return convenios;
     }
 
-    public Convenio findConvenioByName(String nome) {
+    public Convenio findByName(String nome) {
         Optional<Convenio> optional = convenioRepository.findByNome(nome);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException("Convênio não encontrado."));
     }
 
-    public Convenio findConvenio(Integer id) {
+    public Convenio findById(UUID id) {
         Optional<Convenio> optional = convenioRepository.findById(id);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException("Convênio não encontrado."));
     }
 
-    public Convenio insertConvenio(Convenio convenio) {
+    public Convenio save(Convenio convenio) {
         return convenioRepository.save(convenio);
     }
 
-    public Convenio updateConvenio(Convenio convenio) {
-        findConvenio(convenio.getId());
+    public Convenio update(Convenio convenio) {
+        findById(convenio.getId());
         return convenioRepository.save(convenio);
     }
 
-    public void deleteConvenio(Integer id) {
+    public void delete(UUID id) {
         try {
             convenioRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {

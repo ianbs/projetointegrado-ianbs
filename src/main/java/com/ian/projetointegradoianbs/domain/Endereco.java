@@ -43,7 +43,7 @@ public class Endereco implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private TipoEndereco tipoEndereco;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "id_cidade")
     private Cidade cidade;
 

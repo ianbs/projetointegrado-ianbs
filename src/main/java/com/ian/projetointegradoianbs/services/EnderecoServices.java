@@ -3,6 +3,8 @@ package com.ian.projetointegradoianbs.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import com.ian.projetointegradoianbs.domain.Cidade;
 import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.repository.EnderecoRepository;
@@ -20,32 +22,33 @@ public class EnderecoServices {
     @Autowired
     private CidadeServices cidadeServices;
 
-    public Endereco findEndereco(Integer id) {
+    public Endereco findById(Integer id) {
         Optional<Endereco> optional = enderecoRepository.findById(id);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException(
                 "Objeto não encontrado. ID: " + id + ", Tipo: " + Endereco.class.getName()));
     }
 
-    public List<Endereco> insertAllEnderecos(List<Endereco> enderecos) {
+    @Transactional
+    public List<Endereco> save(List<Endereco> enderecos) {
         for (Endereco endereco : enderecos) {
-            Cidade cidade = cidadeServices.findCidadeByNome(endereco.getCidade());
+            Cidade cidade = cidadeServices.findByNome(endereco.getCidade());
             endereco.setCidade(cidade);
         }
         return enderecoRepository.saveAll(enderecos);
     }
 
-    public List<Endereco> updateAllEnderecos(List<Endereco> enderecos) {
+    public List<Endereco> update(List<Endereco> enderecos) {
         for (Endereco endereco : enderecos) {
-            findEndereco(endereco.getId());
-            Cidade cidade = cidadeServices.findCidadeByNome(endereco.getCidade());
+            findById(endereco.getId());
+            Cidade cidade = cidadeServices.findByNome(endereco.getCidade());
             endereco.setCidade(cidade);
         }
         return enderecoRepository.saveAll(enderecos);
     }
 
-    public void deleteAllEnderecos(List<Endereco> enderecos) {
+    public void delete(List<Endereco> enderecos) {
         for (Endereco endereco : enderecos) {
-            findEndereco(endereco.getId());
+            findById(endereco.getId());
             enderecoRepository.deleteById(endereco.getId());
         }
     }

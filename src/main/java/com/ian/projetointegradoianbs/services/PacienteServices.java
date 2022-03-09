@@ -2,6 +2,7 @@ package com.ian.projetointegradoianbs.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.ian.projetointegradoianbs.domain.Paciente;
 import com.ian.projetointegradoianbs.repository.PacienteRepository;
@@ -17,27 +18,27 @@ public class PacienteServices {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    public List<Paciente> findAllPacientes() {
+    public List<Paciente> findAll() {
         List<Paciente> obj = pacienteRepository.findAll();
         return obj;
     }
 
-    public Paciente findPaciente(Long id) {
+    public Paciente findById(UUID id) {
         Optional<Paciente> optional = pacienteRepository.findById(id);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException(
                 "Objeto não encontrado. ID: " + id + ", Tipo: " + Paciente.class.getName()));
     }
 
-    public Paciente insertPaciente(Paciente paciente) {
+    public Paciente save(Paciente paciente) {
         return pacienteRepository.save(paciente);
     }
 
-    public Paciente updatePaciente(Paciente Paciente) {
-        findPaciente(Paciente.getId());
+    public Paciente update(Paciente Paciente) {
+        findById(Paciente.getId());
         return pacienteRepository.save(Paciente);
     }
 
-    public void deletePaciente(Paciente paciente) {
+    public void delete(Paciente paciente) {
         try {
             pacienteRepository.deleteById(paciente.getId());
         } catch (DataIntegrityViolationException e) {

@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import javax.transaction.Transactional;
 
 import com.ian.projetointegradoianbs.domain.Permissoes;
 import com.ian.projetointegradoianbs.domain.Usuario;
 import com.ian.projetointegradoianbs.repository.PermissoesRepository;
 import com.ian.projetointegradoianbs.repository.UsuarioRepository;
+import com.ian.projetointegradoianbs.services.exceptions.DataIntegrityException;
 import com.ian.projetointegradoianbs.services.exceptions.ObjetoNaoEncontradoException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,39 +49,44 @@ public class UsuarioServices implements UserDetailsService {
         return usuarioOptional.get();
     }
 
-    public Usuario find(Long id) {
+    public Usuario findById(UUID id) {
         Optional<Usuario> optional = usuarioRepository.findById(id);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException(
                 "Objeto não encontrado. ID: " + id + ", Tipo: " + Usuario.class.getName()));
     }
 
-    public List<Usuario> listAll() {
+    public List<Usuario> findAll() {
         return usuarioRepository.findAll();
     }
 
-    public Usuario insertUsuario(Usuario usuario) {
+    @Transactional
+    public Usuario save(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario updateUsuario(Usuario usuario) {
-        find(usuario.getId());
+    public Usuario update(Usuario usuario) {
+        findById(usuario.getId());
         usuario.setPassword(usuarioEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
-    public void deleteUsuario(Long id) {
-        Usuario usuario = find(id);
-        usuarioRepository.delete(usuario);
+    public void delete(UUID id) {
+        try {
+            usuarioRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityException("Não é possivel excluir.");
+        }
     }
 
-    public Permissoes insertPermissoes(Permissoes permissoes) {
+    public Permissoes savePermissoes(Permissoes permissoes) {
         return permissoesRepository.save(permissoes);
     }
 
-    public void addPermissoesUsuario(String username, String item) {
+    public void savePermissoesByUsuario(String username, String item) {
         Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
         Permissoes permissoes = permissoesRepository.findByItem(item);
         usuario.get().getPermissoes().add(permissoes);
+        usuarioRepository.save(usuario.get());
     }
 
 }

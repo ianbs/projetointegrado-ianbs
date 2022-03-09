@@ -44,7 +44,8 @@ public class JWTConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**", "/api/usuario/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/login/**", "/api/usuario/token/refresh/**")
+                .permitAll();
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(jwtAuthFilter);
         http.addFilter(new JWTValidateFilter(authenticationManager()))

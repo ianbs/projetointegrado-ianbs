@@ -97,7 +97,7 @@ public class JWTAuthFilter extends UsernamePasswordAuthenticationFilter {
         jsonObject.addProperty("refresh_token", refresh_token);
 
         JsonObject userJsonObject = new JsonObject();
-        userJsonObject.addProperty("id", usuarioData.getId());
+        userJsonObject.addProperty("id", usuarioData.getId().toString());
         userJsonObject.addProperty("nome", usuarioData.getUsername());
         userJsonObject.addProperty("email", usuarioData.getEmail());
 

@@ -1,7 +1,9 @@
 package com.ian.projetointegradoianbs.resources;
 
-import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 
 import com.ian.projetointegradoianbs.domain.Endereco;
 import com.ian.projetointegradoianbs.domain.Paciente;
@@ -9,15 +11,20 @@ import com.ian.projetointegradoianbs.services.EnderecoServices;
 import com.ian.projetointegradoianbs.services.PacienteServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(value = "/api/pacientes")
 public class PacienteResource {
 
@@ -27,46 +34,38 @@ public class PacienteResource {
     @Autowired
     private EnderecoServices enderecoServices;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @GetMapping
     public ResponseEntity<List<Paciente>> findAll() {
-        return ResponseEntity.ok(pacienteServices.findAllPacientes());
+        return ResponseEntity.status(HttpStatus.OK).body(pacienteServices.findAll());
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Paciente> findPaciente(@PathVariable Long id) {
-        Paciente objPessoa = pacienteServices.findPaciente(id);
-        return ResponseEntity.ok().body(objPessoa);
+    @GetMapping("/{id}")
+    public ResponseEntity<Paciente> findById(@PathVariable UUID id) {
+        return ResponseEntity.ok().body(pacienteServices.findById(id));
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Paciente> insertPaciente(@RequestBody Paciente paciente) {
-        List<Endereco> enderecos = enderecoServices.insertAllEnderecos(paciente.getEnderecos());
+    @PostMapping
+    public ResponseEntity<Paciente> save(@RequestBody Paciente paciente) {
+        List<Endereco> enderecos = enderecoServices.save(paciente.getEnderecos());
         paciente.setEnderecos(enderecos);
-
-        Paciente objPaciente = pacienteServices.insertPaciente(paciente);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objPaciente.getId())
-                .toUri();
-        return ResponseEntity.created(uri).build();
+        paciente.setDataCadastro(LocalDateTime.now(ZoneId.of("UTC")));
+        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteServices.save(paciente));
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> updatePaciente(@RequestBody Paciente paciente, @PathVariable Long id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Paciente> updatePaciente(@RequestBody Paciente paciente, @PathVariable UUID id) {
         paciente.setId(id);
-        Paciente pacienteToUpdate = pacienteServices.updatePaciente(paciente);
-
-        List<Endereco> enderecos = enderecoServices.updateAllEnderecos(paciente.getEnderecos());
-        pacienteToUpdate.setEnderecos(enderecos);
-
-        return ResponseEntity.noContent().build();
+        List<Endereco> enderecos = enderecoServices.update(paciente.getEnderecos());
+        paciente.setEnderecos(enderecos);
+        return ResponseEntity.status(HttpStatus.OK).body(pacienteServices.update(paciente));
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deletePaciente(@PathVariable Long id) {
-        Paciente paciente = pacienteServices.findPaciente(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePaciente(@PathVariable UUID id) {
+        Paciente paciente = pacienteServices.findById(id);
 
-        enderecoServices.deleteAllEnderecos(paciente.getEnderecos());
-        pacienteServices.deletePaciente(paciente);
+        enderecoServices.delete(paciente.getEnderecos());
+        pacienteServices.delete(paciente);
 
         return ResponseEntity.noContent().build();
     }

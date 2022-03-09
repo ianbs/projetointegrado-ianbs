@@ -16,31 +16,31 @@ public class ProcedimentoServices {
     @Autowired
     private ProcedimentoRepository procedimentoRepository;
 
-    public List<Procedimento> findAllProcedimentos() {
+    public List<Procedimento> findAll() {
         List<Procedimento> procedimentos = procedimentoRepository.findAll();
         return procedimentos;
     }
 
-    public Procedimento findProcedimento(Long id) {
+    public Procedimento findById(Long id) {
         Optional<Procedimento> optional = procedimentoRepository.findById(id);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException("Procedimento não encontrado."));
     }
 
-    public Procedimento findProcedimentoByCodigoTuss(String codigoTuss) {
+    public Procedimento findByCodigoTuss(String codigoTuss) {
         Optional<Procedimento> optional = procedimentoRepository.findByCodigoTuss(codigoTuss);
         return optional.orElseThrow(() -> new ObjetoNaoEncontradoException("Procedimento não encontrado."));
     }
 
-    public Procedimento insertProcedimento(Procedimento procedimento) {
+    public Procedimento save(Procedimento procedimento) {
         return procedimentoRepository.save(procedimento);
     }
 
-    public Procedimento updateProcedimento(Procedimento procedimento) {
-        findProcedimento(procedimento.getId());
+    public Procedimento update(Procedimento procedimento) {
+        findById(procedimento.getId());
         return procedimentoRepository.save(procedimento);
     }
 
-    public void deleteProcedimento(Long id) {
+    public void delete(Long id) {
         try {
             procedimentoRepository.deleteById(id);
         } catch (DataIntegrityException e) {

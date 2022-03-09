@@ -1,9 +1,9 @@
 package com.ian.projetointegradoianbs.resources;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,46 +21,45 @@ import com.ian.projetointegradoianbs.security.JWTValidateFilter;
 import com.ian.projetointegradoianbs.services.UsuarioServices;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import lombok.Data;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/usuario")
 public class UsuarioResource {
 
     @Autowired
     private UsuarioServices usuarioServices;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Usuario>> findAll() {
-        return ResponseEntity.ok().body(usuarioServices.listAll());
+        return ResponseEntity.ok().body(usuarioServices.findAll());
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Usuario> find(@PathVariable Long id) {
-        Usuario objPessoa = usuarioServices.find(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> findById(@PathVariable UUID id) {
+        Usuario objPessoa = usuarioServices.findById(id);
         return ResponseEntity.ok().body(objPessoa);
     }
 
     @PostMapping("/permissoes")
     public ResponseEntity<Permissoes> createRole(@RequestBody Permissoes permissoes) {
-        URI uri = URI.create(
-                ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/usuario/permissoes").toUriString());
-        return ResponseEntity.created(uri).body(usuarioServices.insertPermissoes(permissoes));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioServices.savePermissoes(permissoes));
     }
 
     @PostMapping("/permissoes/add")
-    public ResponseEntity<?> addPermissoesUsuario(@RequestBody AddPermissoesUsario form) {
-        usuarioServices.addPermissoesUsuario(form.getUsername(), form.getItem());
+    public ResponseEntity<?> addPermissoesByUsuario(@RequestBody AddPermissoesUsario permissoesUsario) {
+        usuarioServices.savePermissoesByUsuario(permissoesUsario.getUsername(), permissoesUsario.getItem());
         return ResponseEntity.ok().build();
     }
 
@@ -92,7 +91,7 @@ public class UsuarioResource {
                 jsonObject.addProperty("refresh_token", refresh_token);
 
                 JsonObject userJsonObject = new JsonObject();
-                userJsonObject.addProperty("id", usuario.getId());
+                userJsonObject.addProperty("id", usuario.getId().toString());
                 userJsonObject.addProperty("nome", usuario.getUsername());
                 userJsonObject.addProperty("email", usuario.getEmail());
 
