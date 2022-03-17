@@ -17,11 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.ian.projetointegradoianbs.domain.enuns.TipoSexo;
 
 import lombok.AllArgsConstructor;
@@ -47,9 +42,6 @@ public class Paciente implements Serializable {
     private String cartaoNacionalSaude;
     private LocalDateTime dataCadastro;
 
-    @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate dataNascimento;
 
     @Enumerated(EnumType.ORDINAL)
